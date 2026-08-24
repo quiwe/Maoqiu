@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2a28">
+  <title>毛球 AI 助手</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="setup-view" class="setup-view" hidden>
+    <section class="setup-panel">
+      <p class="eyebrow">LOCAL AI AGENT</p>
+      <h1>毛球</h1>
+      <p class="setup-copy">先连接一个 OpenAI 兼容模型服务。密钥仅发送到本机服务，不会回显在界面中。</p>
+      <form id="setup-form" class="settings-form">
+        <label>API Key<input name="api_key" type="password" autocomplete="off" placeholder="sk-..." required></label>
+        <label>Base URL<input name="base_url" type="url" placeholder="https://api.openai.com/v1" required></label>
+        <label>模型名称<input name="model_name" type="text" placeholder="gpt-4o-mini" required></label>
+        <p id="setup-status" class="form-status" aria-live="polite"></p>
+        <div class="form-actions">
+          <button type="button" id="setup-test" class="button secondary">测试连接</button>
+          <button type="submit" class="button primary">保存并开始</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div id="app" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark">M</div>
+        <div><strong>毛球</strong><small>本地 AI 助手</small></div>
+        <button id="settings-button" class="icon-button" title="设置" aria-label="设置">&#9881;</button>
+      </div>
+      <button id="new-chat" class="button new-chat">+ 新对话</button>
+      <div id="session-list" class="session-list" aria-label="会话列表"></div>
+      <div class="sidebar-footer">
+        <span id="status-dot" class="status-dot"></span><span id="status-text">正在连接</span>
+      </div>
+    </aside>
+
+    <main class="chat-area">
+      <header class="chat-header">
+        <div>
+          <p id="workspace-label" class="workspace-label">工作目录</p>
+          <h2 id="session-title">新对话</h2>
+        </div>
+        <div class="header-actions">
+          <button id="export-button" class="icon-button" title="导出为 Markdown" aria-label="导出为 Markdown">&#8681;</button>
+          <button id="clear-button" class="icon-button" title="清空当前会话" aria-label="清空当前会话">&#10227;</button>
+          <button id="delete-button" class="icon-button danger" title="删除当前会话" aria-label="删除当前会话">&#128465;</button>
+        </div>
+      </header>
+
+      <section id="messages" class="messages" aria-live="polite"></section>
+
+      <div id="confirmation" class="confirmation" hidden>
+        <div class="confirmation-copy"><strong>检测到需要确认的操作</strong><span id="confirmation-text"></span></div>
+        <div><button id="confirm-run" class="button primary">确认后重试</button><button id="cancel-run" class="button secondary">取消</button></div>
+      </div>
+
+      <form id="composer" class="composer">
+        <textarea id="prompt" rows="1" maxlength="10000" placeholder="输入消息，Enter 发送，Shift+Enter 换行"></textarea>
+        <button id="send-button" class="send-button" type="submit" title="发送" aria-label="发送">&#8593;</button>
+      </form>
+      <p class="safety-note">文件修改、删除、安装依赖和高风险命令默认需要确认。始终检查操作内容。</p>
+    </main>
+  </div>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form id="settings-form" class="settings-form">
+      <div class="dialog-head"><div><p class="eyebrow">CONFIGURATION</p><h2>设置</h2></div><button type="button" id="close-settings" class="icon-button" aria-label="关闭">&#215;</button></div>
+      <section class="setting-section"><h3>模型服务</h3>
+        <label>API Key <small id="key-status"></small><input name="api_key" type="password" autocomplete="new-password" placeholder="留空则保持不变"></label>
+        <label>Base URL<input name="base_url" type="url" required></label>
+        <label>模型名称<input name="model_name" type="text" required></label>
+        <button type="button" id="settings-test" class="button secondary">测试连接</button>
+      </section>
+      <section class="setting-section"><h3>安全与执行</h3>
+        <label>工作目录<input name="workspace" type="text" required></label>
+        <label>确认模式<select name="confirm_mode"><option value="confirm">每次确认副作用操作</option><option value="auto">自动执行（谨慎）</option></select></label>
+        <div class="two-column"><label>命令超时（秒）<input name="command_timeout" type="number" min="1" max="600"></label><label>最大输出字符数<input name="max_output_chars" type="number" min="500" max="100000"></label></div>
+        <label class="check-row"><input name="allow_network_tools" type="checkbox">允许网络搜索和网页读取</label>
+      </section>
+      <section class="setting-section"><h3>会话</h3>
+        <label>最大上下文消息数<input name="max_history_messages" type="number" min="4" max="500"></label>
+        <label class="check-row"><input name="save_history" type="checkbox">保存会话历史到本机</label>
+        <label>系统提示词<textarea name="system_prompt" rows="6"></textarea></label>
+      </section>
+      <p id="settings-status" class="form-status" aria-live="polite"></p>
+      <div class="form-actions"><button type="button" id="cancel-settings" class="button secondary">取消</button><button type="submit" class="button primary">保存设置</button></div>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

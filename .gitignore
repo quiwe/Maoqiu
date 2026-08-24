@@ -23,6 +23,12 @@ env/
 # 配置文件（含密钥）
 config.json
 
+# 会话历史与命令日志（可能含项目内容）
+.maoqiu/
+
+# 测试缓存
+.pytest_cache/
+
 # 系统文件
 .DS_Store
 Thumbs.db
